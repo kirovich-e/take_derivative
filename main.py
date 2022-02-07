@@ -20,8 +20,10 @@ def check_variable(var):
     return "OK"
 
 
+# The function take derivative from function with degree
 def derivative_with_degree(func, var):
     degree = ""
+    coefficient = give_coefficient(func, var)
     if func.find(var) != -1 and func[func.find(var) + 2] == "(":
         for i in range(func.find(var) + 3, len(func)):
             if func[i] == ")":
@@ -37,10 +39,46 @@ def derivative_with_degree(func, var):
         return "0"
 
     if isinstance(degree, int):
-        return f"{degree}{var}^{int(degree)-1}"
+        if coefficient != "":
+            return f"{degree * int(coefficient)}{var}^{int(degree)-1}"
+        else:
+            return f"{degree}{var}^{int(degree) - 1}"
     else:
         pass
          # Здесь должна быть мейновая функция которую будет реверсивно вызывать
 
 
-print(derivative_with_degree(function, variable))
+def give_coefficient(func, var):
+    coefficient = ""
+    for i in func:
+        if i != var and i not in signs:
+            coefficient += i
+        else:
+            break
+    return coefficient
+
+
+def main_derivative(func, var):
+    part = ""
+    all_parts, all_sign = [], []
+    for i in func:
+        if i != "+" and i != "-":
+            part += i
+        else:
+            if i == "+":
+                all_sign.append("+")
+            else:
+                all_sign.append("-")
+            if "^" in part:
+                all_parts.append(derivative_with_degree(part, var))
+            part = ""
+    all_parts.append(derivative_with_degree(part, var))
+    answer = ""
+    for i in range(len(all_parts)):
+        answer += all_parts[i]
+        if i != len(all_parts) - 1:
+            answer += all_sign[i]
+    return answer
+
+
+print(main_derivative(function, variable))
