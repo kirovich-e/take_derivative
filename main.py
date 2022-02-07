@@ -5,32 +5,32 @@ signs = ["+", "-", "*", "/"]
 
 
 # The function check right writing the variable
-def check_variable(var):
-    if len(var) > 1:
+def check_variable():
+    if len(variable) > 1:
         return "Variable can't be longer the 1 symbol"
-    elif len(var) == 0:
+    elif len(variable) == 0:
         return "Variable must have name"
 
-    if not isinstance(var, str):
+    if not isinstance(variable, str):
         return "Variable name must contains only letters"
 
-    if (not (var.isupper() and "A" <= var <= "Z")) and (not (var.islower() and "a" <= var <= "z")):
+    if (not (variable.isupper() and "A" <= variable <= "Z")) and (not (variable.islower() and "a" <= variable <= "z")):
         return "Variable names must contains only latin letters"
 
     return "OK"
 
 
 # The function take derivative from function with degree
-def derivative_with_degree(func, var):
+def derivative_with_degree(func):
     degree = ""
-    coefficient = give_coefficient(func, var)
-    if func.find(var) != -1 and func[func.find(var) + 2] == "(":
-        for i in range(func.find(var) + 3, len(func)):
+    coefficient = find_coefficient(func)
+    if func.find(variable) != -1 and func[func.find(variable) + 2] == "(":
+        for i in range(func.find(variable) + 3, len(func)):
             if func[i] == ")":
                 break
             degree += func[i]
-    elif func.find(var) != -1 and func[func.find(var) + 2] != "(":
-        for i in range(func.find(var) + 2, len(func)):
+    elif func.find(variable) != -1 and func[func.find(variable) + 2] != "(":
+        for i in range(func.find(variable) + 2, len(func)):
             if func[i] in signs:
                 break
             degree += func[i]
@@ -40,39 +40,60 @@ def derivative_with_degree(func, var):
 
     if isinstance(degree, int):
         if coefficient != "":
-            return f"{degree * int(coefficient)}{var}^{int(degree)-1}"
+            if int(degree) - 1 != 1:
+                return f"{degree * int(coefficient)}{variable}^{int(degree)-1}"
+            else:
+                return f"{degree * int(coefficient)}{variable}"
         else:
-            return f"{degree}{var}^{int(degree) - 1}"
+            if int(degree) - 1 != 1:
+                return f"{degree}{variable}^{int(degree) - 1}"
+            else:
+                return f"{degree}{variable}"
     else:
         pass
          # Здесь должна быть мейновая функция которую будет реверсивно вызывать
 
 
-def give_coefficient(func, var):
+# The function find coefficient in part of function
+def find_coefficient(func):
     coefficient = ""
     for i in func:
-        if i != var and i not in signs:
+        if i != variable and i not in signs:
             coefficient += i
         else:
             break
     return coefficient
 
 
-def main_derivative(func, var):
+# The function use another functions the work with derivative
+def work_with_derivative(func):
+    if "^" in func:
+        return derivative_with_degree(func)
+    elif func == variable:
+        if find_coefficient(func) != "":
+            return find_coefficient(func)
+        else:
+            return "1"
+
+
+# The function take derivative
+def derivative(func):
     part = ""
     all_parts, all_sign = [], []
     for i in func:
         if i != "+" and i != "-":
             part += i
         else:
-            if i == "+":
-                all_sign.append("+")
-            else:
-                all_sign.append("-")
-            if "^" in part:
-                all_parts.append(derivative_with_degree(part, var))
+            if variable in part:
+                if i == "+":
+                    all_sign.append("+")
+                else:
+                    all_sign.append("-")
+                all_parts.append(work_with_derivative(part))
+
             part = ""
-    all_parts.append(derivative_with_degree(part, var))
+    if variable in part:
+        all_parts.append(work_with_derivative(part))
     answer = ""
     for i in range(len(all_parts)):
         answer += all_parts[i]
@@ -81,4 +102,5 @@ def main_derivative(func, var):
     return answer
 
 
-print(main_derivative(function, variable))
+print(check_variable())
+print(derivative(function))
